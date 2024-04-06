@@ -1,6 +1,8 @@
 import { createRouter } from "@fartlabs/rt";
 import { go } from "go/go.ts";
 
+type Shortlinks = Record<string, string>;
+
 class GoService {
   public constructor(
     private readonly kv: Deno.Kv,
@@ -12,18 +14,16 @@ class GoService {
     destination: string,
     force = false,
   ): Promise<void> {
-    const collectionResult = await this.kv.get<string>(this.kvNamespace);
-    const collection = collectionResult.value
-      ? JSON.parse(collectionResult.value)
-      : {};
-    if (!force && collection[alias]) {
+    const shortlinksResult = await this.kv.get<Shortlinks>(this.kvNamespace);
+    const shortlinks = shortlinksResult.value ?? {};
+    if (!force && shortlinks[alias]) {
       throw new Error("Shortlink already exists.");
     }
 
-    collection[alias] = destination;
+    shortlinks[alias] = destination;
     const result = await this.kv.atomic()
-      .check(collectionResult)
-      .set(this.kvNamespace, JSON.stringify(collection))
+      .check(shortlinksResult)
+      .set(this.kvNamespace, shortlinks)
       .commit();
     if (!result.ok) {
       throw new Error("Failed to add shortlink.");
@@ -31,23 +31,25 @@ class GoService {
   }
 
   public async delete(alias: string): Promise<void> {
-    const collectionResult = await this.kv.get<string>(this.kvNamespace);
-    const collection = collectionResult.value
-      ? JSON.parse(collectionResult.value)
-      : {};
-    delete collection[alias];
+    const shortlinksResult = await this.kv.get<Shortlinks>(this.kvNamespace);
+    const shortlinks = shortlinksResult.value ?? {};
+    if (!shortlinks[alias]) {
+      throw new Error("Shortlink does not exist.");
+    }
+
+    delete shortlinks[alias];
     const result = await this.kv.atomic()
-      .check(collectionResult)
-      .set(this.kvNamespace, JSON.stringify(collection))
+      .check(shortlinksResult)
+      .set(this.kvNamespace, shortlinks)
       .commit();
     if (!result.ok) {
       throw new Error("Failed to delete shortlink.");
     }
   }
 
-  public async collection(): Promise<Record<string, string>> {
-    const collectionResult = await this.kv.get<string>(this.kvNamespace);
-    return collectionResult.value ? JSON.parse(collectionResult.value) : {};
+  public async shortlinks(): Promise<Shortlinks> {
+    const shortlinksResult = await this.kv.get<Shortlinks>(this.kvNamespace);
+    return shortlinksResult.value ?? {};
   }
 }
 
@@ -80,8 +82,8 @@ if (import.meta.main) {
       return Response.json({ message: "Shortlink deleted." });
     })
     .get("/:path*", async (ctx) => {
-      const collection = await goService.collection();
-      const destination = go(ctx.url, collection);
+      const shortlinks = await goService.shortlinks();
+      const destination = go(ctx.url, shortlinks);
       return new Response(
         `Going to ${destination.href}...`,
         {
