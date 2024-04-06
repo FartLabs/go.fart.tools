@@ -1,0 +1,11 @@
+{
+  "lock": false,
+  "imports": {
+    "go/": "./",
+    "@fartlabs/rt": "jsr:@fartlabs/rt@^0.0.1",
+    "@std/assert": "jsr:@std/assert@^0.221.0"
+  },
+  "tasks": {
+    "start": "deno run --unstable-kv --env -A cli/main.ts"
+  }
+}
