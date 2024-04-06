@@ -1,5 +1,6 @@
 {
-  "tasks": {
-    "dev": "deno run --watch cli/main.ts"
+  "lock": false,
+  "imports": {
+    "@std/assert": "jsr:@std/assert@^0.221.0"
   }
 }
