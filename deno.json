@@ -1,6 +1,7 @@
 {
   "lock": false,
   "imports": {
+    "@fartlabs/htx": "jsr:@fartlabs/htx@^0.0.1",
     "@fartlabs/jsonx": "jsr:@fartlabs/jsonx@^0.0.10",
     "@fartlabs/rtx": "jsr:@fartlabs/rtx@^0.0.2",
     "@std/assert": "jsr:@std/assert@^0.221.0",

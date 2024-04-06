@@ -1,5 +1,5 @@
-import { Delete } from "@fartlabs/rtx";
-import { Get, Post, Router } from "@fartlabs/rtx";
+import { Delete, Get, Post, Router } from "@fartlabs/rtx";
+import { A, BODY, H1, P } from "@fartlabs/htx";
 import { go } from "go/go.ts";
 
 type Shortlinks = Record<string, string>;
@@ -89,6 +89,20 @@ if (import.meta.main) {
           const body = await ctx.request.json();
           await goService.delete(body.alias);
           return Response.json({ message: "Shortlink deleted." });
+        }}
+      />
+      <Get
+        pattern="/"
+        handle={() => {
+          return new Response(
+            <BODY>
+              <H1>
+                <A href="/">go.fart.tools</A>
+              </H1>
+              <P>Welcome!</P>
+            </BODY>,
+            { headers: { "Content-Type": "text/html" } },
+          );
         }}
       />
       <Get
