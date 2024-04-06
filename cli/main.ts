@@ -63,21 +63,21 @@ if (import.meta.main) {
     // TODO: Use rtx to define the routes. Use htx to define the HTML index page.
     .post("/api", async (ctx) => {
       if (!isAuthorized(ctx.request.headers)) {
-        return new Response("Unauthorized", { status: 401 });
+        return Response.json({ error: "Unauthorized" }, { status: 401 });
       }
 
       const body = await ctx.request.json();
       await goService.add(body.alias, body.destination, body.force);
-      return new Response("Shortlink added.", { status: 201 });
+      return Response.json({ message: "Shortlink created." }, { status: 201 });
     })
     .delete("/api", async (ctx) => {
       if (!isAuthorized(ctx.request.headers)) {
-        return new Response("Unauthorized", { status: 401 });
+        return Response.json({ error: "Unauthorized" }, { status: 401 });
       }
 
       const body = await ctx.request.json();
       await goService.delete(body.alias);
-      return new Response("Shortlink removed.", { status: 200 });
+      return Response.json({ message: "Shortlink deleted." });
     })
     .get("/:path*", async (ctx) => {
       const collection = await goService.collection();
