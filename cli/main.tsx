@@ -1,4 +1,5 @@
-import { createRouter } from "@fartlabs/rt";
+import { Delete } from "@fartlabs/rtx";
+import { Get, Post, Router } from "@fartlabs/rtx";
 import { go } from "go/go.ts";
 
 type Shortlinks = Record<string, string>;
@@ -61,37 +62,51 @@ function isAuthorized(headers: Headers): boolean {
 if (import.meta.main) {
   const kv = await Deno.openKv();
   const goService = new GoService(kv);
-  const router = createRouter()
-    // TODO: Use rtx to define the routes. Use htx to define the HTML index page.
-    .post("/api", async (ctx) => {
-      if (!isAuthorized(ctx.request.headers)) {
-        return Response.json({ error: "Unauthorized" }, { status: 401 });
-      }
+  const router = (
+    <Router>
+      <Post
+        pattern="/api"
+        handle={async (ctx) => {
+          if (!isAuthorized(ctx.request.headers)) {
+            return Response.json({ error: "Unauthorized" }, { status: 401 });
+          }
 
-      const body = await ctx.request.json();
-      await goService.add(body.alias, body.destination, body.force);
-      return Response.json({ message: "Shortlink created." }, { status: 201 });
-    })
-    .delete("/api", async (ctx) => {
-      if (!isAuthorized(ctx.request.headers)) {
-        return Response.json({ error: "Unauthorized" }, { status: 401 });
-      }
+          const body = await ctx.request.json();
+          await goService.add(body.alias, body.destination, body.force);
+          return Response.json(
+            { message: "Shortlink created." },
+            { status: 201 },
+          );
+        }}
+      />
+      <Delete
+        pattern="/api"
+        handle={async (ctx) => {
+          if (!isAuthorized(ctx.request.headers)) {
+            return Response.json({ error: "Unauthorized" }, { status: 401 });
+          }
 
-      const body = await ctx.request.json();
-      await goService.delete(body.alias);
-      return Response.json({ message: "Shortlink deleted." });
-    })
-    .get("/:path*", async (ctx) => {
-      const shortlinks = await goService.shortlinks();
-      const destination = go(ctx.url, shortlinks);
-      return new Response(
-        `Going to ${destination.href}...`,
-        {
-          status: 302,
-          headers: { "Location": destination.href },
-        },
-      );
-    });
+          const body = await ctx.request.json();
+          await goService.delete(body.alias);
+          return Response.json({ message: "Shortlink deleted." });
+        }}
+      />
+      <Get
+        pattern="/:path*"
+        handle={async (ctx) => {
+          const shortlinks = await goService.shortlinks();
+          const destination = go(ctx.url, shortlinks);
+          return new Response(
+            `Going to ${destination.href}...`,
+            {
+              status: 302,
+              headers: { "Location": destination.href },
+            },
+          );
+        }}
+      />
+    </Router>
+  );
 
   Deno.serve((request) => router.fetch(request));
 }

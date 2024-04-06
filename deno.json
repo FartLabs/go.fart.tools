@@ -1,11 +1,16 @@
 {
   "lock": false,
   "imports": {
-    "go/": "./",
-    "@fartlabs/rt": "jsr:@fartlabs/rt@^0.0.1",
-    "@std/assert": "jsr:@std/assert@^0.221.0"
+    "@fartlabs/jsonx": "jsr:@fartlabs/jsonx@^0.0.10",
+    "@fartlabs/rtx": "jsr:@fartlabs/rtx@^0.0.2",
+    "@std/assert": "jsr:@std/assert@^0.221.0",
+    "go/": "./"
+  },
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "@fartlabs/jsonx"
   },
   "tasks": {
-    "start": "deno run --unstable-kv --env -A cli/main.ts"
+    "start": "deno run --unstable-kv --env -A cli/main.tsx"
   }
 }
