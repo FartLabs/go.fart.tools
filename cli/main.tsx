@@ -1,5 +1,15 @@
 import { Delete, Get, Post, Router } from "@fartlabs/rtx";
-import { A, BODY, H1, P } from "@fartlabs/htx";
+import {
+  A,
+  BODY,
+  BUTTON,
+  FORM,
+  H1,
+  HEAD,
+  HTML,
+  INPUT,
+  TITLE,
+} from "@fartlabs/htx";
 import { go } from "go/go.ts";
 
 type Shortlinks = Record<string, string>;
@@ -59,10 +69,8 @@ function isAuthorized(headers: Headers): boolean {
   return auth === `Token ${Deno.env.get("GO_TOKEN")}`;
 }
 
-if (import.meta.main) {
-  const kv = await Deno.openKv();
-  const goService = new GoService(kv);
-  const router = (
+function GoRouter(props: { service: GoService }) {
+  return (
     <Router>
       <Post
         pattern="/api"
@@ -72,7 +80,7 @@ if (import.meta.main) {
           }
 
           const body = await ctx.request.json();
-          await goService.add(body.alias, body.destination, body.force);
+          await props.service.add(body.alias, body.destination, body.force);
           return Response.json(
             { message: "Shortlink created." },
             { status: 201 },
@@ -87,20 +95,40 @@ if (import.meta.main) {
           }
 
           const body = await ctx.request.json();
-          await goService.delete(body.alias);
+          await props.service.delete(body.alias);
           return Response.json({ message: "Shortlink deleted." });
         }}
+      />
+      <Get
+        pattern="/favicon.ico"
+        handle={() =>
+          new Response(null, {
+            status: 302,
+            headers: {
+              "Location": "https://deno.land/favicon.ico",
+            },
+          })}
       />
       <Get
         pattern="/"
         handle={() => {
           return new Response(
-            <BODY>
-              <H1>
-                <A href="/">go.fart.tools</A>
-              </H1>
-              <P>Welcome!</P>
-            </BODY>,
+            <HTML>
+              <HEAD>
+                <TITLE>go.fart.tools</TITLE>
+              </HEAD>
+              <BODY>
+                <H1>
+                  <A href="/">go.fart.tools</A>
+                </H1>
+                <FORM>
+                  <INPUT name="alias" placeholder="example" />
+                  <INPUT name="destination" placeholder="https://example.com" />
+                  <INPUT {...{ type: "password" }} name="token" />
+                  <BUTTON type="submit">Submit</BUTTON>
+                </FORM>
+              </BODY>
+            </HTML>,
             { headers: { "Content-Type": "text/html" } },
           );
         }}
@@ -108,10 +136,10 @@ if (import.meta.main) {
       <Get
         pattern="/:path*"
         handle={async (ctx) => {
-          const shortlinks = await goService.shortlinks();
+          const shortlinks = await props.service.shortlinks();
           const destination = go(ctx.url, shortlinks);
           return new Response(
-            `Going to ${destination.href}...`,
+            null,
             {
               status: 302,
               headers: { "Location": destination.href },
@@ -121,6 +149,11 @@ if (import.meta.main) {
       />
     </Router>
   );
+}
 
+if (import.meta.main) {
+  const kv = await Deno.openKv();
+  const goService = new GoService(kv);
+  const router = <GoRouter service={goService} />;
   Deno.serve((request) => router.fetch(request));
 }
