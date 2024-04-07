@@ -131,7 +131,11 @@ function GoRouter(props: { service: GoService }) {
                 <FORM>
                   <LABEL for="alias">
                     Alias:
-                    <INPUT name="alias" placeholder="example" />
+                    <INPUT
+                      name="alias"
+                      placeholder="example"
+                      autofocus="true"
+                    />
                   </LABEL>
                   <BR />
                   <LABEL for="destination">
