@@ -74,7 +74,7 @@ function isAuthorized(headers: Headers): boolean {
 
 function GoRouter(props: { service: GoService }) {
   return (
-    <Router>
+    <Router error={(error) => Response.json({ error: error.message })}>
       <Post
         pattern="/api"
         handle={async (ctx) => {
@@ -114,8 +114,8 @@ function GoRouter(props: { service: GoService }) {
       />
       <Get
         pattern="/"
-        handle={() => {
-          return new Response(
+        handle={() =>
+          new Response(
             <HTML>
               <HEAD>
                 <TITLE>go.fart.tools</TITLE>
@@ -144,7 +144,7 @@ function GoRouter(props: { service: GoService }) {
                   <BR />
                   <LABEL for="token">
                     Token:
-                    <INPUT {...{ type: "password" }} name="token" />
+                    <INPUT type="password" name="token" />
                   </LABEL>
                   <BR />
                   <BUTTON type="submit">Submit</BUTTON>
@@ -183,8 +183,7 @@ function GoRouter(props: { service: GoService }) {
               </BODY>
             </HTML>,
             { headers: { "Content-Type": "text/html" } },
-          );
-        }}
+          )}
       />
       <Get
         pattern="/:path*"
