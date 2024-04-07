@@ -105,12 +105,13 @@ function GoRouter(props: { service: GoService }) {
       <Get
         pattern="/favicon.ico"
         handle={() =>
-          new Response(null, {
-            status: 302,
-            headers: {
-              "Location": "https://deno.land/favicon.ico",
+          new Response(
+            null,
+            {
+              status: 302,
+              headers: { "Location": "https://deno.land/favicon.ico" },
             },
-          })}
+          )}
       />
       <Get
         pattern="/"
