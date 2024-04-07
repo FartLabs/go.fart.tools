@@ -156,34 +156,9 @@ function GoRouter(props: { service: GoService }) {
                 </FORM>
 
                 <SCRIPT>
-                  {`document.querySelector("form").addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const alias = document.querySelector("[name=alias]").value;
-  if (!alias) {
-    alert("Alias is required.");
-    return;
-  }
-
-  const destination = document.querySelector("[name=destination]").value;
-  if (!destination) {
-    alert("Destination is required.");
-    return;
-  }
-
-  const response = await fetch("/api", {
-    method: "POST",
-    headers: {
-      "Authorization": "Token " + document.querySelector("[name=token]").value,
-    },
-    body: JSON.stringify({ alias, destination }),
-  });
-  const body = await response.text();
-  alert(body);
-  // TODO: If successful, clear alias and destination fields and focus alias field.
-  // TODO: If unauthorized, clear and focus token field.
-  // TODO: If alias exists, confirm overwrite.
-  // TODO: Print other errors.
-});`}
+                  {Deno.readTextFileSync(
+                    new URL(import.meta.resolve("./static/ui.js")),
+                  )}
                 </SCRIPT>
               </BODY>
             </HTML>,
