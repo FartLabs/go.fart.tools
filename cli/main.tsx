@@ -2,12 +2,16 @@ import { Delete, Get, Post, Router } from "@fartlabs/rtx";
 import {
   A,
   BODY,
+  BR,
   BUTTON,
   FORM,
   H1,
   HEAD,
   HTML,
   INPUT,
+  LABEL,
+  LINK,
+  SCRIPT,
   TITLE,
 } from "@fartlabs/htx";
 import { go } from "go/go.ts";
@@ -65,8 +69,7 @@ class GoService {
 }
 
 function isAuthorized(headers: Headers): boolean {
-  const auth = headers.get("Authorization");
-  return auth === `Token ${Deno.env.get("GO_TOKEN")}`;
+  return headers.get("Authorization") === `Token ${Deno.env.get("GO_TOKEN")}`;
 }
 
 function GoRouter(props: { service: GoService }) {
@@ -116,17 +119,67 @@ function GoRouter(props: { service: GoService }) {
             <HTML>
               <HEAD>
                 <TITLE>go.fart.tools</TITLE>
+                <LINK
+                  rel="stylesheet"
+                  href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css"
+                />
               </HEAD>
               <BODY>
                 <H1>
                   <A href="/">go.fart.tools</A>
                 </H1>
                 <FORM>
-                  <INPUT name="alias" placeholder="example" />
-                  <INPUT name="destination" placeholder="https://example.com" />
-                  <INPUT {...{ type: "password" }} name="token" />
+                  <LABEL for="alias">
+                    Alias:
+                    <INPUT name="alias" placeholder="example" />
+                  </LABEL>
+                  <BR />
+                  <LABEL for="destination">
+                    Destination:
+                    <INPUT
+                      name="destination"
+                      placeholder="https://example.com"
+                    />
+                  </LABEL>
+                  <BR />
+                  <LABEL for="token">
+                    Token:
+                    <INPUT {...{ type: "password" }} name="token" />
+                  </LABEL>
+                  <BR />
                   <BUTTON type="submit">Submit</BUTTON>
                 </FORM>
+
+                <SCRIPT>
+                  {`document.querySelector("form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const alias = document.querySelector("[name=alias]").value;
+  if (!alias) {
+    alert("Alias is required.");
+    return;
+  }
+
+  const destination = document.querySelector("[name=destination]").value;
+  if (!destination) {
+    alert("Destination is required.");
+    return;
+  }
+
+  const response = await fetch("/api", {
+    method: "POST",
+    headers: {
+      "Authorization": "Token " + document.querySelector("[name=token]").value,
+    },
+    body: JSON.stringify({ alias, destination }),
+  });
+  const body = await response.text();
+  alert(body);
+  // TODO: If successful, clear alias and destination fields and focus alias field.
+  // TODO: If unauthorized, clear and focus token field.
+  // TODO: If alias exists, confirm overwrite.
+  // TODO: Print other errors.
+});`}
+                </SCRIPT>
               </BODY>
             </HTML>,
             { headers: { "Content-Type": "text/html" } },
