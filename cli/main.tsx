@@ -120,6 +120,7 @@ function GoRouter(props: { service: GoService }) {
             <HTML>
               <HEAD>
                 <TITLE>go.fart.tools</TITLE>
+                <LINK rel="icon" href="/favicon.ico" />
                 <LINK
                   rel="stylesheet"
                   href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css"
