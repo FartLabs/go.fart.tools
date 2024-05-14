@@ -103,6 +103,13 @@ function GoRouter(props: { service: GoService }) {
         }}
       />
       <Get
+        pattern="/api"
+        handle={async () => {
+          const shortlinks = await props.service.shortlinks();
+          return Response.json(shortlinks);
+        }}
+      />
+      <Get
         pattern="/favicon.ico"
         handle={() =>
           new Response(
