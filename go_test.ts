@@ -96,3 +96,10 @@ Deno.test("go returns passed URL if invalid or not found", () => {
     assertEquals(go(input, {}), input, `failed on ${input}`);
   });
 });
+
+Deno.test("go resolves subdomain destination", () => {
+  const expected = new URL("https://foobar.example.com/example");
+  const input = new URL("https://example.com/foo/bar");
+  const actual = go(input, { "foo/bar": "https://foobar.example.com/example" });
+  assertEquals(actual.href, expected.href);
+});
