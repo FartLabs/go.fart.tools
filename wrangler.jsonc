@@ -1,0 +1,20 @@
+// Cloudflare Workers static assets config for go.fart.tools.
+//
+// Static assets only: no Worker script. `deno task build` writes the site to
+// dist/, including a `_redirects` file that Workers applies as real HTTP
+// redirects. Unknown paths get dist/404.html.
+//
+// The custom-domain route below is intentionally commented out. go.fart.tools
+// still points at Deno Deploy (alias.deno.net); enabling the route is the
+// cutover step, listed in the README.
+{
+  "$schema": "https://unpkg.com/wrangler@4.112.0/config-schema.json",
+  "name": "go-fart-tools",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  },
+  "workers_dev": true
+  // "routes": [{ "pattern": "go.fart.tools", "custom_domain": true }]
+}
