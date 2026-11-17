@@ -1,11 +1,6 @@
 {
-  "api": "https://api.example.com",
-  "chat": "https://discord.gg/ZwHaZ63yq3",
   "code": "https://github.com/FartLabs/",
-  "docs": "/documentation",
-  "github": "https://github.com",
-  "in": "https://linkedin.com/company/fartlabs",
   "instagram": "https://instagram.com/fartlabs",
-  "twitter": "https://x.com/fartlabs_org",
-  "yt": "https://youtube.com"
+  "linkedin": "https://linkedin.com/company/fartlabs",
+  "twitter": "https://x.com/fartlabs_org"
 }
