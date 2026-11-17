@@ -4,9 +4,7 @@
 // dist/, including a `_redirects` file that Workers applies as real HTTP
 // redirects. Unknown paths get dist/404.html.
 //
-// The custom-domain route below is intentionally commented out. go.fart.tools
-// still points at Deno Deploy (alias.deno.net); enabling the route is the
-// cutover step, listed in the README.
+// go.fart.tools is served by this Worker through the custom-domain route below.
 {
   "$schema": "https://unpkg.com/wrangler@4.112.0/config-schema.json",
   "name": "go-fart-tools",
@@ -15,6 +13,6 @@
     "directory": "./dist",
     "not_found_handling": "404-page"
   },
-  "workers_dev": true
-  // "routes": [{ "pattern": "go.fart.tools", "custom_domain": true }]
+  "workers_dev": true,
+  "routes": [{ "pattern": "go.fart.tools", "custom_domain": true }]
 }
