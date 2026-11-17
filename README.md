@@ -71,9 +71,9 @@ requires. Rollback to Deno Deploy means re-adding both, though Deno Deploy itsel
 - `go.fart.tools` CNAME `alias.deno.net`, DNS only
 - `_acme-challenge.go.fart.tools` CNAME `28f0b1aa046b4ecd90e07e91538f9dcb._acme.deno.net`, DNS only
 
-Other `fart.tools` hosts have their own Workers and repositories: `silly` (FartLabs/silly.fart.tools), `fart.fart`
-(FartLabs/fart), and `css` (FartLabs/fart.css). `jsonx` still points at `alias.deno.net` and needs the same move before
-April 2027.
+Every other `fart.tools` host moved the same day and has its own Worker and repository: `silly`
+(FartLabs/silly.fart.tools), `fart.fart` (FartLabs/fart), `css` (FartLabs/fart.css), and `jsonx` (FartLabs/jsonx_docs).
+Nothing under `fart.tools` points at `alias.deno.net` any more.
 
 ## Apex domain
 
