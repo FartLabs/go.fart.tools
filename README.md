@@ -50,8 +50,8 @@ deno task build   # write dist/
 Nothing deploys automatically yet. `go.fart.tools` still points at Deno Deploy (`alias.deno.net`), which shuts down in
 April 2027. Cutover is a manual sequence:
 
-1. Run `deno task build`, then `npx wrangler deploy` and check the `workers.dev` preview URL: `/code`,
-   `/code/go` (expect a redirect to `github.com/FartLabs/go`), and an unknown path (expect `404`).
+1. Run `deno task build`, then `npx wrangler deploy` and check the `workers.dev` preview URL: `/code`, `/code/go`
+   (expect a redirect to `github.com/FartLabs/go`), and an unknown path (expect `404`).
 2. Confirm that the request's own query string is carried through a redirect. This is not covered by the Cloudflare
    docs, and it is a difference from the old service, which merged query strings.
 3. In `wrangler.jsonc`, uncomment the `go.fart.tools` custom-domain route. Remove the existing `go.fart.tools` CNAME and
