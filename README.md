@@ -71,8 +71,16 @@ requires. Rollback to Deno Deploy means re-adding both, though Deno Deploy itsel
 - `go.fart.tools` CNAME `alias.deno.net`, DNS only
 - `_acme-challenge.go.fart.tools` CNAME `28f0b1aa046b4ecd90e07e91538f9dcb._acme.deno.net`, DNS only
 
-Other `fart.tools` subdomains (`css`, `jsonx`, `silly`, and the apex) still point at `alias.deno.net` and need the same
-move before April 2027.
+Other `fart.tools` hosts have their own Workers and repositories: `silly` (FartLabs/silly.fart.tools), `fart.fart`
+(FartLabs/fart), and `css` (FartLabs/fart.css). `jsonx` still points at `alias.deno.net` and needs the same move before
+April 2027.
+
+## Apex domain
+
+`fart.tools` itself is served by a second Worker, `fart-tools-apex`, in `apex/`. It redirects every request to
+`https://fartlabs.org`, keeping the path and query string. Deploy it with `npx wrangler deploy -c apex/wrangler.jsonc`.
+The old apex record was a CNAME to `alias.deno.net` (proxied). It had to be deleted before the custom domain could
+attach.
 
 ## Dependency note
 
