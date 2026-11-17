@@ -1,0 +1,20 @@
+{
+  "lock": false,
+  "imports": {
+    "@fartlabs/go": "https://raw.githubusercontent.com/FartLabs/go/49b26c5bd7d8dc8d70a8c29f8e5eff7b4e522e90/go.ts",
+    "@std/assert": "jsr:@std/assert@^1.0.19"
+  },
+  "fmt": {
+    "lineWidth": 120,
+    "newLineKind": "lf",
+    "exclude": ["dist/"]
+  },
+  "lint": {
+    "exclude": ["dist/"]
+  },
+  "tasks": {
+    "build": "deno run --allow-read --allow-write build.ts",
+    "test": "deno test --allow-read",
+    "check": "deno fmt --check && deno lint && deno task test && deno task build"
+  }
+}
