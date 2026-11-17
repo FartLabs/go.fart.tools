@@ -45,18 +45,34 @@ deno task check   # fmt --check, lint, test, build
 deno task build   # write dist/
 ```
 
-## Deploying and cutover
+## Deploying
 
-Nothing deploys automatically yet. `go.fart.tools` still points at Deno Deploy (`alias.deno.net`), which shuts down in
-April 2027. Cutover is a manual sequence:
+`go.fart.tools` is served by the `go-fart-tools` Cloudflare Worker (static assets) through the custom-domain route in
+`wrangler.jsonc`. It moved here from Deno Deploy on 2026-11-17, ahead of Deno Deploy's shutdown in April 2027.
 
-1. Run `deno task build`, then `npx wrangler deploy` and check the `workers.dev` preview URL: `/code`, `/code/go`
-   (expect a redirect to `github.com/FartLabs/go`), and an unknown path (expect `404`).
-2. Confirm that the request's own query string is carried through a redirect. This is not covered by the Cloudflare
-   docs, and it is a difference from the old service, which merged query strings.
-3. In `wrangler.jsonc`, uncomment the `go.fart.tools` custom-domain route. Remove the existing `go.fart.tools` CNAME and
-   the `_acme-challenge` CNAME in Cloudflare DNS first, because a custom domain cannot replace an existing record.
-4. Deploy, then verify `https://go.fart.tools/code` returns a `302` to `https://github.com/FartLabs/`.
+Deploys are manual and nothing deploys on merge:
+
+```sh
+deno task build
+npx wrangler deploy
+```
+
+The Cloudflare account is the one that owns the `fart.tools` zone. After deploying, check `/code` (a `302` to
+`https://github.com/FartLabs/`), `/code/go` (a `302` to `https://github.com/FartLabs/go`), and an unknown path (`404`).
+Request query strings are carried through redirects, for example `/twitter?ref=foo`.
+
+Deploying on merge needs a Cloudflare API token stored as a repository secret, which has not been set up.
+
+### Cutover record
+
+The domain was attached in the Cloudflare dashboard after deleting two records that conflicted with it, which Cloudflare
+requires. Rollback to Deno Deploy means re-adding both, though Deno Deploy itself shuts down in April 2027:
+
+- `go.fart.tools` CNAME `alias.deno.net`, DNS only
+- `_acme-challenge.go.fart.tools` CNAME `28f0b1aa046b4ecd90e07e91538f9dcb._acme.deno.net`, DNS only
+
+Other `fart.tools` subdomains (`css`, `jsonx`, `silly`, and the apex) still point at `alias.deno.net` and need the same
+move before April 2027.
 
 ## Dependency note
 
