@@ -84,9 +84,12 @@ attach.
 
 ## Dependency note
 
-`deno.json` imports `@fartlabs/go` from a pinned commit instead of JSR. The released `0.0.3` predates the cycle and
-self-reference fixes, and this repo's tests rely on them. Once a newer version is published to JSR, switch the import to
-`jsr:@fartlabs/go@^<version>`.
+`deno.json` imports `@fartlabs/go` from JSR, pinned to exactly `0.0.4`, the first release with the cycle and
+self-reference fixes this repo's tests rely on. Bump the pin deliberately when adopting a newer release.
+
+Deno 2.9 refuses to install package versions published in the last 24 hours. `@fartlabs/go` is exempted in
+`minimumDependencyAge` so a new FartLabs release can be adopted the day it ships; every other dependency keeps the
+24-hour delay.
 
 ## Differences from the old service
 

@@ -1,7 +1,11 @@
 {
   "lock": false,
+  "minimumDependencyAge": {
+    "age": "P1D",
+    "exclude": ["jsr:@fartlabs/go"]
+  },
   "imports": {
-    "@fartlabs/go": "https://raw.githubusercontent.com/FartLabs/go/49b26c5bd7d8dc8d70a8c29f8e5eff7b4e522e90/go.ts",
+    "@fartlabs/go": "jsr:@fartlabs/go@0.0.4",
     "@std/assert": "jsr:@std/assert@^1.0.19"
   },
   "fmt": {
