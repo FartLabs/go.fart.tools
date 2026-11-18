@@ -50,7 +50,9 @@ deno task build   # write dist/
 `go.fart.tools` is served by the `go-fart-tools` Cloudflare Worker (static assets) through the custom-domain route in
 `wrangler.jsonc`. It moved here from Deno Deploy on 2026-11-17, ahead of Deno Deploy's shutdown in April 2027.
 
-Deploys are manual and nothing deploys on merge:
+Every push to `main` deploys through Cloudflare Workers Builds, which is connected to this repository in the Worker's
+settings. The build image has no Deno, so the build command is `npm i -g deno@2.9.6 && deno task build`, followed by
+`npx wrangler deploy`. Other branches upload a preview version without deploying it. To deploy by hand:
 
 ```sh
 deno task build
@@ -60,8 +62,6 @@ npx wrangler deploy
 The Cloudflare account is the one that owns the `fart.tools` zone. After deploying, check `/code` (a `302` to
 `https://github.com/FartLabs/`), `/code/go` (a `302` to `https://github.com/FartLabs/go`), and an unknown path (`404`).
 Request query strings are carried through redirects, for example `/twitter?ref=foo`.
-
-Deploying on merge needs a Cloudflare API token stored as a repository secret, which has not been set up.
 
 ### Cutover record
 
@@ -78,7 +78,8 @@ Nothing under `fart.tools` points at `alias.deno.net` any more.
 ## Apex domain
 
 `fart.tools` itself is served by a second Worker, `fart-tools-apex`, in `apex/`. It redirects every request to
-`https://fartlabs.org`, keeping the path and query string. Deploy it with `npx wrangler deploy -c apex/wrangler.jsonc`.
+`https://fartlabs.org`, keeping the path and query string. It deploys from `main` through its own Workers Builds
+connection, with `/apex` as the root directory. To deploy it by hand, run `npx wrangler deploy -c apex/wrangler.jsonc`.
 The old apex record was a CNAME to `alias.deno.net` (proxied). It had to be deleted before the custom domain could
 attach.
 
